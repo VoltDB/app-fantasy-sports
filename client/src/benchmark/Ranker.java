@@ -87,9 +87,9 @@ public class Ranker implements Runnable {
 
     private void upsertScore(ScoreTable t, int rank) throws IOException {
 
-        client.callProcedure(new BenchmarkCallback("CUSTOMER_CONTEST_SCORE.upsert"),
-                             "CUSTOMER_CONTEST_SCORE.upsert",
-                             t.getCustomerId(),
+        client.callProcedure(new BenchmarkCallback("USER_CONTEST_SCORE.upsert"),
+                             "USER_CONTEST_SCORE.upsert",
+                             t.getUserId(),
                              contestId,
                              t.score,
                              rank
@@ -117,7 +117,7 @@ public class Ranker implements Runnable {
             //return this.score-o.score;
         }
 
-        public int getCustomerId() {
+        public int getUserId() {
             return (int)t.getLong(0);
         }
         

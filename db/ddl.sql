@@ -18,46 +18,47 @@ CREATE TABLE nfl_contest_large (
   PRIMARY KEY (contest_id)
 );
 
-CREATE TABLE customer (
-  customer_id      INTEGER      NOT NULL,
+CREATE TABLE fantasy_user (
+  user_id      INTEGER      NOT NULL,
   name             VARCHAR(30)  NOT NULL,
-  PRIMARY KEY (customer_id)  
+  PRIMARY KEY (user_id)  
 );
-PARTITION TABLE customer ON COLUMN customer_id;
+PARTITION TABLE fantasy_user ON COLUMN user_id;
 
-CREATE TABLE customer_contest_score (
-  customer_id      INTEGER      NOT NULL,
+CREATE TABLE user_contest_score (
+  user_id      INTEGER      NOT NULL,
   contest_id       INTEGER      NOT NULL,
   score            INTEGER      NOT NULL,
   rank             INTEGER,
-  PRIMARY KEY (customer_id, contest_id)
+  PRIMARY KEY (user_id, contest_id)
 );
-PARTITION TABLE customer_contest_score ON COLUMN customer_id;
-CREATE INDEX idx_customer_contest_score ON customer_contest_score (contest_id, score);
+PARTITION TABLE user_contest_score ON COLUMN user_id;
+CREATE INDEX idx_user_contest_score ON user_contest_score (contest_id, score);
 
--- CREATE TABLE customer_contest_rank (
+-- CREATE TABLE user_contest_rank (
 --   contest_id       INTEGER      NOT NULL,
---   customer_id      INTEGER      NOT NULL,
+--   user_id      INTEGER      NOT NULL,
 --   rank             INTEGER      NOT NULL,
---   PRIMARY KEY (customer_id, contest_id)
+--   PRIMARY KEY (user_id, contest_id)
 -- );
--- PARTITION TABLE customer_contest_rank ON COLUMN customer_id;
---CREATE INDEX idx_ranks ON customer_contest_rank (contest_id, score);
+-- PARTITION TABLE user_contest_rank ON COLUMN user_id;
+--CREATE INDEX idx_ranks ON user_contest_rank (contest_id, score);
 
-CREATE TABLE customer_contest_roster (
+CREATE TABLE user_contest_roster (
   contest_id       INTEGER      NOT NULL,
-  customer_id      INTEGER      NOT NULL,
+  user_id      INTEGER      NOT NULL,
   player_id        INTEGER      NOT NULL,
-  PRIMARY KEY (contest_id, customer_id, player_id)
+  score            INTEGER,
+  PRIMARY KEY (contest_id, user_id, player_id)
 );
-PARTITION TABLE customer_contest_roster ON COLUMN customer_id;
-CREATE INDEX idx_roster_by_contest ON customer_contest_roster (contest_id, customer_id);
+PARTITION TABLE user_contest_roster ON COLUMN user_id;
+CREATE INDEX idx_roster_by_contest ON user_contest_roster (contest_id, user_id);
 
 -- Update classes from jar to that server will know about classes but not procedures yet.
 LOAD CLASSES procs.jar;
 
 -- Define procedures
-CREATE PROCEDURE PARTITION ON TABLE customer COLUMN customer_id FROM CLASS procedures.SelectAllScoresInPartition;
-CREATE PROCEDURE PARTITION ON TABLE customer COLUMN customer_id FROM CLASS procedures.SelectContestScoresInPartition;
-CREATE PROCEDURE PARTITION ON TABLE customer COLUMN customer_id FROM CLASS procedures.UpsertCustomerScores;
+CREATE PROCEDURE PARTITION ON TABLE fantasy_user COLUMN user_id FROM CLASS procedures.SelectAllScoresInPartition;
+CREATE PROCEDURE PARTITION ON TABLE fantasy_user COLUMN user_id FROM CLASS procedures.SelectContestScoresInPartition;
+CREATE PROCEDURE PARTITION ON TABLE fantasy_user COLUMN user_id FROM CLASS procedures.UpsertUserScores;
 

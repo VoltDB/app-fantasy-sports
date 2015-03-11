@@ -11,9 +11,10 @@ public class Benchmark {
 
     // CONSTANTS
     private int nflPlayers = 300;
-    private int customerCount = 1000000;
-    private int largeContests = 10;
+    private int userCount = 1000000;
+    private int largeContests = 1;
     private int smallContests = 0;
+    private int threads = 1;
     
 
     private Random rand = new Random();
@@ -50,21 +51,21 @@ public class Benchmark {
         //                          );
         // }
         
-        // generate customers
-        System.out.println("Generating " + customerCount + " customers...");
-        for (int i=0; i<customerCount; i++) {
-            client.callProcedure(new BenchmarkCallback("CUSTOMER.upsert"),
-                                 "CUSTOMER.upsert",
+        // generate users
+        System.out.println("Generating " + userCount + " users...");
+        for (int i=0; i<userCount; i++) {
+            client.callProcedure(new BenchmarkCallback("FANTASY_USER.upsert"),
+                                 "FANTASY_USER.upsert",
                                  i,
-                                 "Customer " + i
+                                 "User " + i
                                  );
 
             // TODO: roster may need to be a different table
             //int smallContest = rand.nextInt(smallContests);
-            // each customer has 9 (randomly selected) players on their roster
+            // each user has 9 (randomly selected) players on their roster
             // for (int j=0; j<9; j++) {
-            //     client.callProcedure(new BenchmarkCallback("CUSTOMER_CONTEST_ROSTER.upsert"),
-            //                          "CUSTOMER_CONTEST_ROSTER.upsert",
+            //     client.callProcedure(new BenchmarkCallback("USER_CONTEST_ROSTER.upsert"),
+            //                          "USER_CONTEST_ROSTER.upsert",
             //                          smallContest,
             //                          i,
             //                          rand.nextInt(nflPlayers)
@@ -72,13 +73,14 @@ public class Benchmark {
             // }
 
             int largeContest = rand.nextInt(largeContests);
-            // each customer has 9 (randomly selected) players on their roster
+            // each user has 9 (randomly selected) players on their roster
             for (int j=0; j<9; j++) {
-                client.callProcedure(new BenchmarkCallback("CUSTOMER_CONTEST_ROSTER.upsert"),
-                                     "CUSTOMER_CONTEST_ROSTER.upsert",
+                client.callProcedure(new BenchmarkCallback("USER_CONTEST_ROSTER.upsert"),
+                                     "USER_CONTEST_ROSTER.upsert",
                                      largeContest,
                                      i,
-                                     rand.nextInt(nflPlayers)
+                                     rand.nextInt(nflPlayers),
+                                     0
                                      );
             }
         }
@@ -99,7 +101,7 @@ public class Benchmark {
         }
 
         // Run Ranker threads (see below) in a pool
-        ExecutorService executor = Executors.newFixedThreadPool(1);
+        ExecutorService executor = Executors.newFixedThreadPool(threads);
         
         for (int i=0; i<1; i++) {
         
@@ -129,8 +131,8 @@ public class Benchmark {
             //                              partVal,
             //                              c);
 
-                    // client.callProcedure(new BenchmarkCallback("UpsertCustomerScores"),
-                    //                      "UpsertCustomerScores",
+                    // client.callProcedure(new BenchmarkCallback("UpsertUserScores"),
+                    //                      "UpsertUserScores",
                     //                      partVal,
                     //                      c);
 
