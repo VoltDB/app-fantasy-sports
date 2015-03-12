@@ -37,24 +37,24 @@ Instructions
 
 1. Start the database 
 
-    cd db
-    voltdb create -d deployment-demo.xml
+    cd db  
+    voltdb create -d deployment-demo.xml  
 
 2. Load the schema
 
-    cd db
-    ./compile_procs.sh
-    sqlcmd < ddl.sql
+    cd db  
+    ./compile_procs.sh  
+    sqlcmd < ddl.sql  
 
 3. Run the client
 
-    cd client
-    ./run_client.sh
+    cd client  
+    ./run_client.sh  
 
     
 4. Stop the database
 
-    voltadmin shutdown
+    voltadmin shutdown  
    
 
 
