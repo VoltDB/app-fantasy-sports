@@ -1,3 +1,26 @@
+/* This file is part of VoltDB.
+ * Copyright (C) 2008-2017 VoltDB Inc.
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining
+ * a copy of this software and associated documentation files (the
+ * "Software"), to deal in the Software without restriction, including
+ * without limitation the rights to use, copy, modify, merge, publish,
+ * distribute, sublicense, and/or sell copies of the Software, and to
+ * permit persons to whom the Software is furnished to do so, subject to
+ * the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be
+ * included in all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+ * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+ * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
+ * IN NO EVENT SHALL THE AUTHORS BE LIABLE FOR ANY CLAIM, DAMAGES OR
+ * OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE,
+ * ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
+ * OTHER DEALINGS IN THE SOFTWARE.
+ */
+
 package benchmark;
 
 import java.util.Random;
@@ -15,7 +38,7 @@ public class Benchmark {
     private int largeContests = 1;
     private int smallContests = 0;
     private int threads = 1;
-    
+
 
     private Random rand = new Random();
     private Client client;
@@ -50,7 +73,7 @@ public class Benchmark {
         //                          1
         //                          );
         // }
-        
+
         // generate users
         System.out.println("Generating " + userCount + " users...");
         for (int i=0; i<userCount; i++) {
@@ -85,10 +108,10 @@ public class Benchmark {
             }
         }
 
-        
+
     }
 
-    
+
     public void runBenchmark() throws Exception {
 
         // for Run Everywhere procedures
@@ -102,9 +125,9 @@ public class Benchmark {
 
         // Run Ranker threads (see below) in a pool
         ExecutorService executor = Executors.newFixedThreadPool(threads);
-        
+
         for (int i=0; i<1; i++) {
-        
+
             // generate player stats
             System.out.println("Updating NFL player stats...");
             for (int p=0; p<nflPlayers; p++) {
@@ -125,7 +148,7 @@ public class Benchmark {
             // }
             // for (int partVal : partitionKeys) {
             //     for (int c=0; c<largeContests; c++) {
-                    
+
             //         client.callProcedure(new BenchmarkCallback("SelectContestScoresInPartition"),
             //                              "SelectContestScoresInPartition",
             //                              partVal,
@@ -141,30 +164,30 @@ public class Benchmark {
             client.drain();
 
             System.out.println("Updating scores and rankings...");
-            
+
             for (int c=0; c<largeContests; c++) {
 
                 // run a Ranker
                 Runnable r = new Ranker(partitionKeys, c, client);
                 //r.run();
                 executor.execute(r);
-                
+
             }
         }
-        
+
         // stop the executor & wait for any threads to finish
         executor.shutdown();
         while (!executor.isTerminated()) {
         }
-        
+
         client.drain();
 
         BenchmarkCallback.printAllResults();
 
         client.close();
     }
-    
-    
+
+
     public static void main(String[] args) throws Exception {
 
         String serverlist = "localhost";
